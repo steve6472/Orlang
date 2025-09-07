@@ -33,7 +33,7 @@ public enum VarContext
     {
         for (VarContext value : values())
         {
-            if (value.contextName.equals(str) || value.alias.equals(str))
+            if (value.contextName.equals(str) || (value.alias != null && value.alias.equals(str)))
                 return value;
         }
 

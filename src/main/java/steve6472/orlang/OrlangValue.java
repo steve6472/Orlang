@@ -146,7 +146,7 @@ public interface OrlangValue
             case java.lang.Number number -> num(number.doubleValue());
             case Boolean b -> bool(b);
             case String s -> string(s);
-            default -> throw new IllegalArgumentException("Unknown type " + val.getClass().getSimpleName());
+            default -> throw new IllegalArgumentException("Unknown type " + val.getClass().getCanonicalName());
         };
     }
 

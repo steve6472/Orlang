@@ -126,6 +126,18 @@ public class OrlangInterpreter
                         values[i] = interpret(arguments[i], environment);
                     }
                     yield func.eval(values);
+                } else if (exp.identifier().context() == VarContext.QUERY)
+                {
+                    OrlangValue.Func func = environment.queryFunctionSet.functions.get(exp.identifier().name());
+                    if (func == null)
+                        throw new RuntimeException("Function " + "'query." + exp.identifier().name() + "' not found");
+                    AST.Node[] arguments = exp.arguments();
+                    OrlangValue[] values = new OrlangValue[arguments.length];
+                    for (int i = 0; i < arguments.length; i++)
+                    {
+                        values[i] = interpret(arguments[i], environment);
+                    }
+                    yield func.eval(values);
                 }
                 throw new IllegalStateException("Unexpected context " + exp.identifier().context());
             }

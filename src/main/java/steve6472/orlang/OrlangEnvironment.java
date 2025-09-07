@@ -16,6 +16,7 @@ public class OrlangEnvironment
     private final Map<String, OrlangValue> tempMap = new HashMap<>();
     public Map<String, OrCode> expressions = new HashMap<>();
     public Map<AST.Node.Identifier, Curve> curves = new HashMap<>();
+    public QueryFunctionSet queryFunctionSet = QueryFunctionSet.EMPTY;
 
     public void setValue(AST.Node.Identifier identifier, OrlangValue value)
     {
@@ -80,5 +81,6 @@ public class OrlangEnvironment
         tempMap.clear();
         expressions.clear();
         curves.clear();
+        queryFunctionSet = QueryFunctionSet.EMPTY;
     }
 }
