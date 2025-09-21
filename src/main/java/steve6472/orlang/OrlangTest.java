@@ -16,7 +16,8 @@ public class OrlangTest
 
     public static void main(String[] args)
     {
-        String expression = "v.rng2 = math.random(0, 1); v.out = (v.rng2 < 0.5 ? -1 : 1) * 10";
+//        String expression = "v.rng2 = math.random(0, 1); v.out = (v.rng2 < 0.5 ? -1 : 1) * 10";
+        String expression = "math.max(-math.sin(2), -0.95)";
         OrlangParser parser = new OrlangParser();
         OrlangInterpreter interpreter = new OrlangInterpreter();
 

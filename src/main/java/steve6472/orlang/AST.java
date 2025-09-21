@@ -28,6 +28,11 @@ public final class AST
                 return "Identifier{" + "context=" + context + ", name='" + name + '\'' + ", path=" + Arrays.toString(path) + '}';
             }
 
+            public String stringify()
+            {
+                return context.contextName() + "." + name;
+            }
+
             public static final Codec<Identifier> CODEC = Codec.STRING.comapFlatMap(s -> {
                 if (!s.contains("."))
                     return DataResult.error(() -> "Missing context");

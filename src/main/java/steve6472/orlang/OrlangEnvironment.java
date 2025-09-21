@@ -50,8 +50,14 @@ public class OrlangEnvironment
                 if (orlangValue == null)
                     throw new NullPointerException("No value for " + identifier + " was found");
                 return orlangValue;
-            } else
-                throw new IllegalArgumentException("Context " + identifier.context() + " is not implemented yet");
+            } else if (identifier.context() == VarContext.QUERY)
+            {
+                OrlangValue.Func func = queryFunctionSet.functions.get(identifier.name());
+                if (func == null)
+                    throw new RuntimeException("Function " + "'query." + identifier.name() + "' not found");
+                return func.eval();
+            }else
+                throw new IllegalArgumentException("Context " + identifier.context() + " is not implemented");
         } else
         {
             throw new UnsupportedOperationException("Path is not implemented yet");
