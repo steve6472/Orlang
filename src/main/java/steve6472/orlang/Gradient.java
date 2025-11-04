@@ -97,6 +97,11 @@ public class Gradient
     public void apply(OrlangEnvironment env, Vector4f toTint)
     {
         double t = interpolant.evaluateAndGet(env);
+        apply(t, toTint);
+    }
+
+    public void apply(double t, Vector4f toTint)
+    {
         t = Math.clamp(t, 0, 1);
 
         // Pick gradient start - end
