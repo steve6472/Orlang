@@ -43,6 +43,8 @@ public class OrlangParser
         parser.prefixParslet(MainTokens.NAME, new IdentifierParslet());
         parser.prefixParslet(MainTokens.NUMBER_DOUBLE, new NumberParslet());
         parser.prefixParslet(MainTokens.NUMBER_INT, new NumberParslet());
+        parser.prefixParslet(MainTokens.STRING, new StringParslet());
+        parser.prefixParslet(MainTokens.CHAR, new StringParslet());
         parser.prefixParslet(OrlangToken.RETURN, new ReturnParslet());
         parser.prefixParslet(OrlangToken.PARENTHESIS_LEFT, new GroupParslet());
 

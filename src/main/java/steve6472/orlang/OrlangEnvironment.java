@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class OrlangEnvironment
 {
-    private final Map<String, OrlangValue> variableMap = new HashMap<>();
-    private final Map<String, OrlangValue> tempMap = new HashMap<>();
+    public final Map<String, OrlangValue> variableMap = new HashMap<>();
+    public final Map<String, OrlangValue> tempMap = new HashMap<>();
     public Map<String, OrCode> expressions = new HashMap<>();
     public Map<AST.Node.Identifier, Curve> curves = new HashMap<>();
     public QueryFunctionSet queryFunctionSet = QueryFunctionSet.EMPTY;

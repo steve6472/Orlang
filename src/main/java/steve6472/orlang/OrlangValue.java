@@ -108,7 +108,7 @@ public interface OrlangValue
         @Override
         public String toString()
         {
-            return "AString[" + "value='" + value + '\'' + ']';
+            return "StringVal[" + "value='" + value + '\'' + ']';
         }
     }
 
@@ -143,6 +143,7 @@ public interface OrlangValue
 
         return switch (val)
         {
+            case OrlangValue orlang -> orlang;
             case java.lang.Number number -> num(number.doubleValue());
             case Boolean b -> bool(b);
             case String s -> string(s);

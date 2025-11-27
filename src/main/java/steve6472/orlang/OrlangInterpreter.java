@@ -2,8 +2,8 @@ package steve6472.orlang;
 
 import steve6472.orlang.codec.OrCode;
 
-import static steve6472.orlang.Orlang.checkBool;
-import static steve6472.orlang.Orlang.checkNum;
+import static steve6472.orlang.Orlang.expectBool;
+import static steve6472.orlang.Orlang.expectNum;
 
 /**
  * Created by steve6472
@@ -28,6 +28,7 @@ public class OrlangInterpreter
         {
             case AST.Node.NumberLiteral exp -> OrlangValue.num(exp.value());
             case AST.Node.BoolLiteral exp -> OrlangValue.bool(exp.value());
+            case AST.Node.StringLiteral exp -> OrlangValue.string(exp.value());
 
             case AST.Node.Assign exp -> {
                 var result = interpret(exp.expression(), environment.nest());
@@ -41,62 +42,19 @@ public class OrlangInterpreter
                 OrlangValue right = interpret(exp.right(), environment);
                 yield switch (exp.type())
                 {
-                    case OR -> OrlangValue.bool(checkBool(left, exp.type()) || checkBool(right, exp.type()));
-                    case AND -> OrlangValue.bool(checkBool(left, exp.type()) && checkBool(right, exp.type()));
-                    case LESS -> OrlangValue.bool(checkNum(left, exp.type()) < checkNum(right, exp.type()));
-                    case LESS_EQ -> OrlangValue.bool(checkNum(left, exp.type()) <= checkNum(right, exp.type()));
-                    case GREATER -> OrlangValue.bool(checkNum(left, exp.type()) > checkNum(right, exp.type()));
-                    case GREATER_EQ -> OrlangValue.bool(checkNum(left, exp.type()) >= checkNum(right, exp.type()));
-                    case EQUAL ->
-                    {
-                        if (left instanceof OrlangValue.Bool leftB)
-                        {
-                            if (right instanceof OrlangValue.Bool rightB)
-                            {
-                                yield OrlangValue.bool(leftB.value() == rightB.value());
-                            } else
-                            {
-                                throw new IllegalArgumentException("Can not mix bool == num");
-                            }
-                        } else
-                        {
-                            var leftN = ((OrlangValue.Number) left);
-                            if (right instanceof OrlangValue.Number rightN)
-                            {
-                                yield OrlangValue.bool(leftN.value() == rightN.value());
-                            } else
-                            {
-                                throw new IllegalArgumentException("Can not mix num == bool");
-                            }
-                        }
-                    }
-                    case NOT_EQUAL ->
-                    {
-                        if (left instanceof OrlangValue.Bool leftB)
-                        {
-                            if (right instanceof OrlangValue.Bool rightB)
-                            {
-                                yield OrlangValue.bool(leftB.value() != rightB.value());
-                            } else
-                            {
-                                throw new IllegalArgumentException("Can not mix bool == num");
-                            }
-                        } else
-                        {
-                            var leftN = ((OrlangValue.Number) left);
-                            if (right instanceof OrlangValue.Number rightN)
-                            {
-                                yield OrlangValue.bool(leftN.value() != rightN.value());
-                            } else
-                            {
-                                throw new IllegalArgumentException("Can not mix num == bool");
-                            }
-                        }
-                    }
-                    case MUL -> OrlangValue.num(checkNum(left, exp.type()) * checkNum(right, exp.type()));
-                    case DIV -> OrlangValue.num(checkNum(left, exp.type()) / checkNum(right, exp.type()));
-                    case ADD -> OrlangValue.num(checkNum(left, exp.type()) + checkNum(right, exp.type()));
-                    case SUB -> OrlangValue.num(checkNum(left, exp.type()) - checkNum(right, exp.type()));
+                    case OR -> OrlangValue.bool(expectBool(left, exp.type()) || expectBool(right, exp.type()));
+                    case AND -> OrlangValue.bool(expectBool(left, exp.type()) && expectBool(right, exp.type()));
+                    case LESS -> OrlangValue.bool(expectNum(left, exp.type()) < expectNum(right, exp.type()));
+                    case LESS_EQ -> OrlangValue.bool(expectNum(left, exp.type()) <= expectNum(right, exp.type()));
+                    case GREATER -> OrlangValue.bool(expectNum(left, exp.type()) > expectNum(right, exp.type()));
+                    case GREATER_EQ -> OrlangValue.bool(expectNum(left, exp.type()) >= expectNum(right, exp.type()));
+                    case EQUAL -> binOpEqual(left, right);
+                    case NOT_EQUAL -> binOpNotEqual(left, right);
+                    case MUL -> OrlangValue.num(expectNum(left, exp.type()) * expectNum(right, exp.type()));
+                    case DIV -> OrlangValue.num(expectNum(left, exp.type()) / expectNum(right, exp.type()));
+                    case ADD -> binOpAdd(left, right);
+                    case SUB -> OrlangValue.num(expectNum(left, exp.type()) - expectNum(right, exp.type()));
+                    case MOD -> OrlangValue.num(expectNum(left, exp.type()) % expectNum(right, exp.type()));
                     default -> throw new IllegalStateException("Unexpected value: " + exp.type());
                 };
             }
@@ -106,8 +64,8 @@ public class OrlangInterpreter
                 OrlangValue right = interpret(exp.expression(), environment);
                 yield switch (exp.type())
                 {
-                    case NOT -> OrlangValue.bool(!checkBool(right, exp.type()));
-                    case SUB -> OrlangValue.num(-checkNum(right, exp.type()));
+                    case NOT -> OrlangValue.bool(!expectBool(right, exp.type()));
+                    case SUB -> OrlangValue.num(-expectNum(right, exp.type()));
                     default -> throw new IllegalStateException("Unexpected value: " + exp.type());
                 };
             }
@@ -144,7 +102,7 @@ public class OrlangInterpreter
 
             case AST.Node.Ternary exp ->
             {
-                if (checkBool(interpret(exp.condition(), environment)))
+                if (expectBool(interpret(exp.condition(), environment)))
                 {
                     yield interpret(exp.ifTrue(), environment);
                 } else
@@ -159,4 +117,69 @@ public class OrlangInterpreter
             default -> throw new IllegalStateException("Unexpected value: " + nodeExpression);
         };
     }
+
+    private static OrlangValue binOpEqual(OrlangValue left, OrlangValue right)
+    {
+        if (left instanceof OrlangValue.Bool leftB)
+        {
+            if (right instanceof OrlangValue.Bool rightB)
+            {
+                return OrlangValue.bool(leftB.value() == rightB.value());
+            } else
+            {
+                throw new IllegalArgumentException("Can not mix bool == num");
+            }
+        } else
+        {
+            var leftN = ((OrlangValue.Number) left);
+            if (right instanceof OrlangValue.Number rightN)
+            {
+                return OrlangValue.bool(leftN.value() == rightN.value());
+            } else
+            {
+                throw new IllegalArgumentException("Can not mix num == bool");
+            }
+        }
+    }
+
+    private static OrlangValue binOpNotEqual(OrlangValue left, OrlangValue right)
+    {
+        if (left instanceof OrlangValue.Bool leftB)
+        {
+            if (right instanceof OrlangValue.Bool rightB)
+            {
+                return OrlangValue.bool(leftB.value() != rightB.value());
+            } else
+            {
+                throw new IllegalArgumentException("Can not mix bool == num");
+            }
+        } else
+        {
+            var leftN = ((OrlangValue.Number) left);
+            if (right instanceof OrlangValue.Number rightN)
+            {
+                return OrlangValue.bool(leftN.value() != rightN.value());
+            } else
+            {
+                throw new IllegalArgumentException("Can not mix num == bool");
+            }
+        }
+    }
+
+    private static OrlangValue binOpAdd(OrlangValue left, OrlangValue right)
+    {
+        if (left instanceof OrlangValue.StringVal leftS)
+        {
+            return switch (right)
+            {
+                case OrlangValue.StringVal str -> OrlangValue.string(leftS.value() + str.value());
+                case OrlangValue.Bool bool -> OrlangValue.string(leftS.value() + bool.value());
+                case OrlangValue.Number num -> OrlangValue.string(leftS.value() + num.value());
+                default -> throw new IllegalStateException("Cannot add with: " + right);
+            };
+        }
+
+        return OrlangValue.num(expectNum(left, OrlangToken.ADD) + expectNum(right, OrlangToken.ADD));
+    }
+
 }

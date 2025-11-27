@@ -30,6 +30,7 @@ public enum OrlangToken implements Token
     NOT_EQUAL("!=", OrlangPrecedence.COMPARE),
 
     // Math
+    MOD("%", OrlangPrecedence.PRODUCT),
     MUL("*", OrlangPrecedence.PRODUCT),
     DIV("/", OrlangPrecedence.PRODUCT),
     ADD("+", OrlangPrecedence.SUM),

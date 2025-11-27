@@ -95,28 +95,28 @@ public class Orlang
         }));
     }
 
-    public static boolean checkBool(OrlangValue value, OrlangToken operation)
+    public static boolean expectBool(OrlangValue value, OrlangToken operation)
     {
         if (!(value instanceof OrlangValue.Bool bool))
             throw new IllegalStateException("Operation '" + operation.getSymbol() + "' expected a boolean result, got: " + value);
         return bool.value();
     }
 
-    public static boolean checkBool(OrlangValue value)
+    public static boolean expectBool(OrlangValue value)
     {
         if (!(value instanceof OrlangValue.Bool bool))
             throw new IllegalStateException("Expected a boolean result, got: " + value);
         return bool.value();
     }
 
-    public static double checkNum(OrlangValue value, OrlangToken operation)
+    public static double expectNum(OrlangValue value, OrlangToken operation)
     {
         if (!(value instanceof OrlangValue.Number num))
             throw new IllegalStateException("Operation '" + operation.getSymbol() + "' expected a number result, got: " + value);
         return num.value();
     }
 
-    public static double checkNum(OrlangValue value)
+    public static double expectNum(OrlangValue value)
     {
         if (!(value instanceof OrlangValue.Number num))
             throw new IllegalStateException("Expected a number result, got: " + value);

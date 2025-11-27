@@ -101,7 +101,7 @@ public sealed interface NodeExpectation permits
             }
             if (!Objects.equals(name, f.identifier().stringify()))
             {
-                throw new AssertionError("Expected FunctionCall to " + name + ", got " + f.identifier().name());
+                throw new AssertionError("Expected FunctionCall to " + name + ", got " + f.identifier().stringify());
             }
             if (args.size() != f.arguments().length)
             {
