@@ -28,7 +28,7 @@ public sealed interface NodeExpectation permits
             }
             if (!Objects.equals(name, id.stringify()))
             {
-                throw new AssertionError("Expected Identifier name='" + name + "', got '" + id.name() + "'");
+                throw new AssertionError("Expected Identifier name='" + name + "', got '" + id.stringify() + "'");
             }
         }
     }
@@ -37,13 +37,13 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.NumberLiteral num))
+            if (!(node instanceof AST.Node.NumberLiteral(double value1)))
             {
                 throw new AssertionError("Expected NumberLiteral, got " + node.getClass().getSimpleName());
             }
-            if (Double.compare(value, num.value()) != 0)
+            if (Double.compare(value, value1) != 0)
             {
-                throw new AssertionError("Expected NumberLiteral=" + value + ", got " + num.value());
+                throw new AssertionError("Expected NumberLiteral=" + value + ", got " + value1);
             }
         }
     }
@@ -52,13 +52,13 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.BoolLiteral b))
+            if (!(node instanceof AST.Node.BoolLiteral(boolean value1)))
             {
                 throw new AssertionError("Expected BoolLiteral, got " + node.getClass().getSimpleName());
             }
-            if (b.value() != value)
+            if (value1 != value)
             {
-                throw new AssertionError("Expected BoolLiteral=" + value + ", got " + b.value());
+                throw new AssertionError("Expected BoolLiteral=" + value + ", got " + value1);
             }
         }
     }
@@ -67,13 +67,13 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.StringLiteral s))
+            if (!(node instanceof AST.Node.StringLiteral(String value1)))
             {
                 throw new AssertionError("Expected StringLiteral, got " + node.getClass().getSimpleName());
             }
-            if (!Objects.equals(value, s.value()))
+            if (!Objects.equals(value, value1))
             {
-                throw new AssertionError("Expected StringLiteral='" + value + "', got '" + s.value() + "'");
+                throw new AssertionError("Expected StringLiteral='" + value + "', got '" + value1 + "'");
             }
         }
     }
@@ -82,12 +82,12 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.Assign a))
+            if (!(node instanceof AST.Node.Assign(AST.Node.Identifier identifier, AST.Node expression)))
             {
                 throw new AssertionError("Expected Assign, got " + node.getClass().getSimpleName());
             }
-            target.verify(a.identifier());
-            expr.verify(a.expression());
+            target.verify(identifier);
+            expr.verify(expression);
         }
     }
 
@@ -95,21 +95,21 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.FunctionCall f))
+            if (!(node instanceof AST.Node.FunctionCall(AST.Node.Identifier identifier, AST.Node[] arguments)))
             {
                 throw new AssertionError("Expected FunctionCall, got " + node.getClass().getSimpleName());
             }
-            if (!Objects.equals(name, f.identifier().stringify()))
+            if (!Objects.equals(name, identifier.stringify()))
             {
-                throw new AssertionError("Expected FunctionCall to " + name + ", got " + f.identifier().stringify());
+                throw new AssertionError("Expected FunctionCall to " + name + ", got " + identifier.stringify());
             }
-            if (args.size() != f.arguments().length)
+            if (args.size() != arguments.length)
             {
-                throw new AssertionError("Expected " + args.size() + " args, got " + f.arguments().length);
+                throw new AssertionError("Expected " + args.size() + " args, got " + arguments.length);
             }
             for (int i = 0; i < args.size(); i++)
             {
-                args.get(i).verify(f.arguments()[i]);
+                args.get(i).verify(arguments[i]);
             }
         }
     }
@@ -118,16 +118,16 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.BinOp b))
+            if (!(node instanceof AST.Node.BinOp(OrlangToken type, AST.Node left1, AST.Node right1)))
             {
                 throw new AssertionError("Expected BinOp, got " + node.getClass().getSimpleName());
             }
-            if (b.type() != token)
+            if (type != token)
             {
-                throw new AssertionError("Expected BinOp token=" + token + ", got " + b.type());
+                throw new AssertionError("Expected BinOp token=" + token + ", got " + type);
             }
-            left.verify(b.left());
-            right.verify(b.right());
+            left.verify(left1);
+            right.verify(right1);
         }
     }
 
@@ -135,15 +135,15 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.UnaryOp u))
+            if (!(node instanceof AST.Node.UnaryOp(OrlangToken type, AST.Node expression)))
             {
                 throw new AssertionError("Expected UnaryOp, got " + node.getClass().getSimpleName());
             }
-            if (u.type() != token)
+            if (type != token)
             {
-                throw new AssertionError("Expected UnaryOp token=" + token + ", got " + u.type());
+                throw new AssertionError("Expected UnaryOp token=" + token + ", got " + type);
             }
-            expr.verify(u.expression());
+            expr.verify(expression);
         }
     }
 
@@ -151,13 +151,13 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.Ternary t))
+            if (!(node instanceof AST.Node.Ternary(AST.Node condition, AST.Node aTrue, AST.Node aFalse)))
             {
                 throw new AssertionError("Expected Ternary, got " + node.getClass().getSimpleName());
             }
-            cond.verify(t.condition());
-            ifTrue.verify(t.ifTrue());
-            ifFalse.verify(t.ifFalse());
+            cond.verify(condition);
+            ifTrue.verify(aTrue);
+            ifFalse.verify(aFalse);
         }
     }
 
@@ -165,11 +165,11 @@ public sealed interface NodeExpectation permits
     {
         public void verify(AST.Node node)
         {
-            if (!(node instanceof AST.Node.Return r))
+            if (!(node instanceof AST.Node.Return(AST.Node expression)))
             {
                 throw new AssertionError("Expected Return, got " + node.getClass().getSimpleName());
             }
-            expr.verify(r.expression());
+            expr.verify(expression);
         }
     }
 

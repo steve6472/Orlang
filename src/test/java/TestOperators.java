@@ -55,12 +55,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testLess() {
-        String expression = "3 < 5";
+        String expression = "3 < temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.LESS, number(3), number(5))
+            bin(OrlangToken.LESS, number(3), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -68,12 +68,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testLessEq() {
-        String expression = "3 <= 5";
+        String expression = "3 <= temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.LESS_EQ, number(3), number(5))
+            bin(OrlangToken.LESS_EQ, number(3), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -81,12 +81,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testGreater() {
-        String expression = "7 > 2";
+        String expression = "7 > temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.GREATER, number(7), number(2))
+            bin(OrlangToken.GREATER, number(7), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -94,12 +94,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testGreaterEq() {
-        String expression = "7 >= 2";
+        String expression = "7 >= temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.GREATER_EQ, number(7), number(2))
+            bin(OrlangToken.GREATER_EQ, number(7), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -107,12 +107,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testEqual() {
-        String expression = "4 == 4";
+        String expression = "4 == temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.EQUAL, number(4), number(4))
+            bin(OrlangToken.EQUAL, number(4), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -120,12 +120,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testNotEqual() {
-        String expression = "42 != 9";
+        String expression = "42 != temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.NOT_EQUAL, number(42), number(9))
+            bin(OrlangToken.NOT_EQUAL, number(42), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -135,12 +135,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testMod() {
-        String expression = "10 % 3";
+        String expression = "10 % temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.MOD, number(10), number(3))
+            bin(OrlangToken.MOD, number(10), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -148,12 +148,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testMul() {
-        String expression = "3 * 4";
+        String expression = "3 * temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.MUL, number(3), number(4))
+            bin(OrlangToken.MUL, number(3), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -161,12 +161,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testDiv() {
-        String expression = "12 / 4";
+        String expression = "12 / temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.DIV, number(12), number(4))
+            bin(OrlangToken.DIV, number(12), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -174,12 +174,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testAdd() {
-        String expression = "1 + 2";
+        String expression = "1 + temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.ADD, number(1), number(2))
+            bin(OrlangToken.ADD, number(1), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -187,12 +187,12 @@ public class TestOperators implements NodeExpectationHelper
 
     @Test
     public void testSub() {
-        String expression = "5 - 3";
+        String expression = "5 - temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            bin(OrlangToken.SUB, number(5), number(3))
+            bin(OrlangToken.SUB, number(5), ident("temp.t"))
         );
 
         verify(spec, code);
@@ -201,12 +201,12 @@ public class TestOperators implements NodeExpectationHelper
     @Test
     public void testUnarySub() {
         // because SUB has 'true' for unary capability
-        String expression = "-8";
+        String expression = "-temp.t";
         OrCode parse = Orlang.parser.parse(expression);
         List<AST.Node> code = parse.code();
 
         List<NodeExpectation> spec = List.of(
-            unary(OrlangToken.SUB, number(8))
+            unary(OrlangToken.SUB, ident("temp.t"))
         );
 
         verify(spec, code);

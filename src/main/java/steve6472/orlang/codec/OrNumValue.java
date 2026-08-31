@@ -1,81 +1,33 @@
 package steve6472.orlang.codec;
 
 import com.mojang.serialization.Codec;
-import steve6472.orlang.Orlang;
 import steve6472.orlang.OrlangEnvironment;
-import steve6472.orlang.OrlangValue;
 
 /**
  * Created by steve6472
- * Date: 8/27/2025
- * Project: Orbiter <br>
+ * Date: 8/31/2026
+ * Project: Orlang <br>
+ *
  */
-public class OrNumValue
+public interface OrNumValue
 {
-    private final OrCode code;
-    private OrlangValue.Number value;
+    Codec<OrNumValue> CODEC = Codec.withAlternative(ConstantNum.CODEC, DynamicNum.CODEC);
 
-    private static final Codec<OrNumValue> NUM_CODEC = OrCode.CODEC.xmap(OrNumValue::new, o -> o.code);
-    public static final Codec<OrNumValue> CODEC = Codec.withAlternative(Codec.DOUBLE.xmap(OrNumValue::new, OrNumValue::get), NUM_CODEC);
-
-    public OrNumValue(OrCode code)
+    static OrNumValue constant(double constant)
     {
-        this.code = code;
+        return new ConstantNum(constant);
     }
 
-    public OrNumValue(double constant)
+    static OrNumValue dynamic(OrCode code)
     {
-        this.code = null;
-        this.value = OrlangValue.num(constant);
+        return new DynamicNum(code);
     }
 
-    public boolean hadFirstEval()
-    {
-        return !isConstant() && value != null;
-    }
-
-    public boolean isConstant()
-    {
-        return code == null;
-    }
-
-    public double get()
-    {
-        return value.value();
-    }
-
-    public float fget()
-    {
-        return (float) value.value();
-    }
-
-    public void evaluate(OrlangEnvironment environment)
-    {
-        if (isConstant())
-            return;
-
-        OrlangValue retValue = Orlang.interpreter.interpret(code, environment);
-        if (!(retValue instanceof OrlangValue.Number number))
-            throw new RuntimeException("Orlang did not return a number, got: '" + retValue + "' for code: '" + code.codeStr() + "'");
-        this.value = number;
-    }
-
-    public double evaluateAndGet(OrlangEnvironment environment)
-    {
-        evaluate(environment);
-        return get();
-    }
-
-    public OrNumValue copy()
-    {
-        OrNumValue orNumValue = new OrNumValue(code);
-        orNumValue.value = value;
-        return orNumValue;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "OrNumValue{" + "code=" + code + ", value=" + value + '}';
-    }
+    boolean hadFirstEval();
+    boolean isConstant();
+    double get();
+    float fget();
+    void evaluate(OrlangEnvironment environment);
+    double evaluateAndGet(OrlangEnvironment environment);
+    OrNumValue copy();
 }

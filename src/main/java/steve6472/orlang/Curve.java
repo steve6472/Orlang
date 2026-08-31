@@ -42,7 +42,7 @@ public record Curve(CurveType type, OrNumValue input, OrNumValue horizontalRange
 	public static final Codec<Curve> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    CurveType.CODEC.fieldOf("type").forGetter(Curve::type),
 		OrNumValue.CODEC.fieldOf("input").forGetter(Curve::input),
-		OrNumValue.CODEC.optionalFieldOf("horizontal_range", new OrNumValue(1)).forGetter(Curve::horizontalRange),
+		OrNumValue.CODEC.optionalFieldOf("horizontal_range", OrNumValue.constant(1)).forGetter(Curve::horizontalRange),
 		EITHER_NODES.fieldOf("nodes").forGetter(Curve::nodes)
 	).apply(instance, Curve::new));
 

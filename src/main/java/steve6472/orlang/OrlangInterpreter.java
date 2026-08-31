@@ -1,6 +1,10 @@
 package steve6472.orlang;
 
+import steve6472.core.log.Log;
 import steve6472.orlang.codec.OrCode;
+
+import java.util.Arrays;
+import java.util.logging.Logger;
 
 import static steve6472.orlang.Orlang.expectBool;
 import static steve6472.orlang.Orlang.expectNum;
@@ -12,6 +16,8 @@ import static steve6472.orlang.Orlang.expectNum;
  */
 public class OrlangInterpreter
 {
+    private static final Logger LOGGER = Log.getLogger(OrlangInterpreter.class);
+
     public OrlangValue interpret(OrCode code, OrlangEnvironment environment)
     {
         OrlangValue lastValue = null;
@@ -95,7 +101,13 @@ public class OrlangInterpreter
                     {
                         values[i] = interpret(arguments[i], environment);
                     }
-                    yield func.eval(values);
+                    try {
+                        yield func.eval(values);
+                    } catch (Exception ex)
+                    {
+                        LOGGER.severe("Error while executing function '%s' with arguments: %s".formatted(exp.identifier().name(), Arrays.toString(values)));
+                        throw ex;
+                    }
                 }
                 throw new IllegalStateException("Unexpected context " + exp.identifier().context());
             }
@@ -120,6 +132,14 @@ public class OrlangInterpreter
 
     private static OrlangValue binOpEqual(OrlangValue left, OrlangValue right)
     {
+        if (left instanceof OrlangValue.StringVal leftS)
+        {
+            if (right instanceof OrlangValue.StringVal rightS)
+            {
+                return OrlangValue.bool(leftS.value().equals(rightS.value()));
+            }
+        }
+
         if (left instanceof OrlangValue.Bool leftB)
         {
             if (right instanceof OrlangValue.Bool rightB)
@@ -144,6 +164,14 @@ public class OrlangInterpreter
 
     private static OrlangValue binOpNotEqual(OrlangValue left, OrlangValue right)
     {
+        if (left instanceof OrlangValue.StringVal leftS)
+        {
+            if (right instanceof OrlangValue.StringVal rightS)
+            {
+                return OrlangValue.bool(!leftS.value().equals(rightS.value()));
+            }
+        }
+
         if (left instanceof OrlangValue.Bool leftB)
         {
             if (right instanceof OrlangValue.Bool rightB)

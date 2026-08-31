@@ -24,6 +24,12 @@ public class UnaryParslet implements PrefixParselet<AST.Node>
             throw new ParserException("Token is not of orlang type");
         if (!token.forUnary)
             throw new ParserException("Token '" + token + "' is not for unary operation");
-        return new AST.Node.UnaryOp(token, parser.parse(OrlangPrecedence.PREFIX));
+        AST.Node parsedRight = parser.parse(OrlangPrecedence.PREFIX);
+
+        // Constant fold
+        if (token == OrlangToken.SUB && parsedRight instanceof AST.Node.NumberLiteral(double value))
+            return new AST.Node.NumberLiteral(-value);
+
+        return new AST.Node.UnaryOp(token, parsedRight);
     }
 }

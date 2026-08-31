@@ -1,78 +1,32 @@
 package steve6472.orlang.codec;
 
 import com.mojang.serialization.Codec;
-import steve6472.orlang.Orlang;
 import steve6472.orlang.OrlangEnvironment;
-import steve6472.orlang.OrlangValue;
 
 /**
  * Created by steve6472
- * Date: 8/27/2025
- * Project: Orbiter <br>
+ * Date: 8/31/2026
+ * Project: Orlang <br>
+ *
  */
-public class OrBoolValue
+public interface OrBoolValue
 {
-    private static final OrBoolValue TRUE = new OrBoolValue(true);
-    private static final OrBoolValue FALSE = new OrBoolValue(false);
+    Codec<OrBoolValue> CODEC = Codec.withAlternative(ConstantBool.CODEC, DynamicBool.CODEC);
 
-    private final OrCode code;
-    private OrlangValue.Bool value;
-
-    private static final Codec<OrBoolValue> BOOL_CODEC = OrCode.CODEC.xmap(OrBoolValue::new, o -> o.code);
-    public static final Codec<OrBoolValue> CODEC = Codec.withAlternative(Codec.BOOL.xmap(OrBoolValue::constant, OrBoolValue::get), BOOL_CODEC);
-
-    public OrBoolValue(OrCode code)
+    static OrBoolValue constant(boolean constant)
     {
-        this.code = code;
+        return constant ? ConstantBool.TRUE : ConstantBool.FALSE;
     }
 
-    private OrBoolValue(boolean constant)
+    static OrBoolValue dynamic(OrCode code)
     {
-        this.code = null;
-        this.value = OrlangValue.bool(constant);
+        return new DynamicBool(code);
     }
 
-    public static OrBoolValue constant(boolean constant)
-    {
-        return constant ? TRUE : FALSE;
-    }
-
-    public boolean hadFirstEval()
-    {
-        return value != null;
-    }
-
-    public boolean isConstant()
-    {
-        return code == null;
-    }
-
-    public boolean get()
-    {
-        return value.value();
-    }
-
-    public void evaluate(OrlangEnvironment environment)
-    {
-        if (isConstant())
-            return;
-
-        OrlangValue retValue = Orlang.interpreter.interpret(code, environment);
-        if (!(retValue instanceof OrlangValue.Bool bool))
-            throw new RuntimeException("Orlang did not return a bool");
-        this.value = bool;
-    }
-
-    public boolean evaluateAndGet(OrlangEnvironment environment)
-    {
-        evaluate(environment);
-        return get();
-    }
-
-    public OrBoolValue copy()
-    {
-        OrBoolValue orBoolValue = new OrBoolValue(code);
-        orBoolValue.value = value;
-        return orBoolValue;
-    }
+    boolean hadFirstEval();
+    boolean isConstant();
+    boolean get();
+    void evaluate(OrlangEnvironment environment);
+    boolean evaluateAndGet(OrlangEnvironment environment);
+    OrBoolValue copy();
 }

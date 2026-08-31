@@ -40,9 +40,9 @@ public class OrVec3
 
     public OrVec3(double x, double y, double z)
     {
-        this.x = new OrNumValue(x);
-        this.y = new OrNumValue(y);
-        this.z = new OrNumValue(z);
+        this.x = OrNumValue.constant(x);
+        this.y = OrNumValue.constant(y);
+        this.z = OrNumValue.constant(z);
     }
 
     public OrVec3()

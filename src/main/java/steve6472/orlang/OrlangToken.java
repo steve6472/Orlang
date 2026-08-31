@@ -2,6 +2,8 @@ package steve6472.orlang;
 
 import steve6472.core.tokenizer.Token;
 
+import java.util.Set;
+
 /**
  * Created by steve6472
  * Date: 8/27/2025
@@ -43,6 +45,18 @@ public enum OrlangToken implements Token
     TRUE("true"),
     FALSE("false")
     ;
+
+    public static final Set<OrlangToken> FOLD_BINARY_MATH = Set.of(
+        MOD, MUL, DIV, ADD, SUB
+    );
+
+    public static final Set<OrlangToken> FOLD_BINARY_MATH_RET_BOOL = Set.of(
+        LESS, LESS_EQ, GREATER, GREATER_EQ, EQUAL, NOT_EQUAL
+    );
+
+    public static final Set<OrlangToken> FOLD_BINARY_BOOL = Set.of(
+        EQUAL, NOT_EQUAL, OR, AND
+    );
 
     private final String symbol;
     public final OrlangPrecedence binaryPrecedence;

@@ -47,9 +47,11 @@ public final class AST
             }, id -> id.context().contextName() + "." + id.name());
         }
 
-        record NumberLiteral(double value) implements Node {}
-        record BoolLiteral(boolean value) implements Node {}
-        record StringLiteral(String value) implements Node {}
+        interface Literal {}
+
+        record NumberLiteral(double value) implements Node, Literal {}
+        record BoolLiteral(boolean value) implements Node, Literal {}
+        record StringLiteral(String value) implements Node, Literal {}
 
         record Assign(Identifier identifier, Node expression) implements Node {}
         record FunctionCall(Identifier identifier, Node[] arguments) implements Node {

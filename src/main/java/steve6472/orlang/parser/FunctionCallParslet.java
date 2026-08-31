@@ -4,10 +4,7 @@ import steve6472.core.tokenizer.InfixParslet;
 import steve6472.core.tokenizer.Precedence;
 import steve6472.core.tokenizer.TokenParser;
 import steve6472.core.tokenizer.Tokenizer;
-import steve6472.orlang.AST;
-import steve6472.orlang.OrlangPrecedence;
-import steve6472.orlang.OrlangToken;
-import steve6472.orlang.ParserException;
+import steve6472.orlang.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +31,11 @@ public class FunctionCallParslet implements InfixParslet<AST.Node>
 
         if (tokenizer.matchToken(OrlangToken.PARENTHESIS_RIGHT, true))
         {
+            // Constant fold
+            AST.Node fold = constantFold(identifier, new AST.Node[0]);
+            if (fold != null)
+                return fold;
+
             return new AST.Node.FunctionCall(identifier, new AST.Node[0]);
         }
 
@@ -51,7 +53,38 @@ public class FunctionCallParslet implements InfixParslet<AST.Node>
                 throw new ParserException("Expected ',' or ')' in argument list, got " + tokenizer.peekToken());
         }
 
-        return new AST.Node.FunctionCall(identifier, args.toArray(new AST.Node[0]));
+        AST.Node[] argsArray = args.toArray(new AST.Node[0]);
+
+        // Constant fold
+        AST.Node fold = constantFold(identifier, argsArray);
+        if (fold != null)
+            return fold;
+
+        return new AST.Node.FunctionCall(identifier, argsArray);
+    }
+
+    private AST.Node constantFold(AST.Node.Identifier identifier, AST.Node[] args)
+    {
+        if (identifier.context() == VarContext.MATH)
+        {
+            OrlangValue[] argValues = new OrlangValue[args.length];
+
+            for (int i = 0; i < args.length; i++)
+            {
+                AST.Node arg = args[i];
+                if (!(arg instanceof AST.Node.NumberLiteral(double litValue)))
+                    return null;
+                argValues[i] = OrlangValue.num(litValue);
+            }
+
+            if (Orlang.FOLDABLE_MATH.contains(identifier.name()))
+            {
+                OrlangValue eval = Orlang.MATH_FUNCTIONS.get(identifier.name()).eval(argValues);
+                if (eval instanceof OrlangValue.Number num)
+                    return new AST.Node.NumberLiteral(num.value());
+            }
+        }
+        return null;
     }
 
     @Override

@@ -15,14 +15,11 @@ public interface NodeExpectationHelper
     default NodeExpectation.BoolExp bool(boolean v) { return NodeExpectation.bool(v); }
     default NodeExpectation.StringExp str(String v) { return NodeExpectation.str(v); }
     default NodeExpectation.AssignExp assign(NodeExpectation id, NodeExpectation expr) { return NodeExpectation.assign(id, expr); }
-    default NodeExpectation.FunctionCallExp call(String name, NodeExpectation... args) {
-        return NodeExpectation.call(name, args);
-    }
+    default NodeExpectation.FunctionCallExp call(String name, NodeExpectation... args) { return NodeExpectation.call(name, args); }
     default NodeExpectation.BinOpExp bin(OrlangToken token, NodeExpectation l, NodeExpectation r) { return NodeExpectation.bin(token, l, r); }
     default NodeExpectation.UnaryOpExp unary(OrlangToken token, NodeExpectation expr) { return NodeExpectation.unary(token, expr); }
     default NodeExpectation.TernaryExp ternary(NodeExpectation c, NodeExpectation t, NodeExpectation f) { return NodeExpectation.ternary(c, t, f); }
     default NodeExpectation.ReturnExp ret(NodeExpectation expr) { return NodeExpectation.ret(expr); }
-
 
     default void verify(List<NodeExpectation> expectations, List<AST.Node> nodes)
     {
